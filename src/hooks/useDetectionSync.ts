@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { useCameraStream } from '@/components/WebcamDetection';
+import { useCameraStream } from '@/components/Webcam Detection/WebcamDetection';
 
 // Type for detections from the camera context
 type Detection = {

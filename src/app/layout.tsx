@@ -10,12 +10,6 @@ import { ModelViewerScript } from '@/components/ModelViewer/ModelViewerScript';
 const inter = Inter({ subsets: ['latin'], variable: '--font-inter' });
 const poppins = Poppins({ weight: ['400', '500', '600', '700', '800'], subsets: ['latin'], variable: '--font-poppins' });
 
-// Import the CameraProvider component with SSR disabled
-const CameraProviderRoot = dynamic(
-  () => import('@/components/WebcamDetection').then(mod => mod.CameraProviderRoot),
-  { ssr: false }
-);
-
 export const metadata: Metadata = {
   title: 'Percevia - Vision Enhancement Technology',
   description: 'Experience the future of vision enhancement technology with Percevia',
@@ -29,15 +23,11 @@ export default function RootLayout({
   return (
     <html lang="en" className={`${inter.variable} ${poppins.variable}`}>
       <body className="min-h-screen bg-black text-white overflow-x-hidden font-poppins">
-        {/* Move ModelViewerScript inside the body */}
+        {/* Load ModelViewerScript only once per page */}
         <ModelViewerScript />
-        {/* Include the CameraProvider at the root level */}
-        <div>
-          <CameraProviderRoot />
-          <Navigation />
-          <main className="pt-16">{children}</main>
-          <Footer />
-        </div>
+        <Navigation />
+        <main className="pt-16">{children}</main>
+        <Footer />
       </body>
     </html>
   );

@@ -49,7 +49,7 @@ function Glasses() {
       
       {/* Enhanced lenses with gradient effect */}
       <mesh position={[-0.5, 0, 0]}>
-        <cylinderGeometry args={[0.45, 0.45, 0.08, 32]} rotation={[Math.PI / 2, 0, 0]} />
+        <cylinderGeometry args={[0.45, 0.45, 0.08, 32]} />
         <meshPhysicalMaterial
           color="#4080ff"
           metalness={0.7}
@@ -63,7 +63,7 @@ function Glasses() {
         />
       </mesh>
       <mesh position={[0.5, 0, 0]}>
-        <cylinderGeometry args={[0.45, 0.45, 0.08, 32]} rotation={[Math.PI / 2, 0, 0]} />
+        <cylinderGeometry args={[0.45, 0.45, 0.08, 32]} />
         <meshPhysicalMaterial
           color="#4080ff"
           metalness={0.7}
