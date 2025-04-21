@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useRef, useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 
 // Custom hook for accessing the camera stream
 export function useCameraStream() {
@@ -44,103 +44,69 @@ const WebcamDetection: React.FC = () => {
     }
   }, [stream]);
 
-  // Periodically capture frames and send them for detection
+  // Stream video feed to the backend via WebSocket
   useEffect(() => {
-    const interval = setInterval(async () => {
+    if (!stream) return;
+
+    const socket = new WebSocket('ws://localhost:5000/video-feed');
+
+    socket.onopen = () => {
+      console.log('WebSocket connection established');
+    };
+
+    socket.onerror = (error) => {
+      console.error('WebSocket error:', error);
+    };
+
+    socket.onclose = () => {
+      console.log('WebSocket connection closed');
+    };
+
+    const sendVideoFeed = () => {
       const video = webcamRef.current;
       if (!video) return;
 
       const canvas = document.createElement('canvas');
       canvas.width = video.videoWidth;
       canvas.height = video.videoHeight;
-      canvas.getContext('2d')?.drawImage(video, 0, 0, canvas.width, canvas.height);
 
-      const blob = await new Promise<Blob | null>((resolve) =>
-        canvas.toBlob(resolve, 'image/jpeg')
-      );
-      if (!blob) return;
+      const context = canvas.getContext('2d');
+      if (context) {
+        context.drawImage(video, 0, 0, canvas.width, canvas.height);
 
-      const formData = new FormData();
-      formData.append('frame', blob);
-
-      try {
-        const response = await fetch('http://localhost:5000/detect', {
-          method: 'POST',
-          body: formData,
-        });
-        const data = await response.json();
-        setDetections(data.bounding_boxes || []);
-      } catch (err) {
-        console.error('Detection request failed:', err);
+        // Convert the canvas content to a Blob
+        canvas.toBlob((blob) => {
+          if (blob && socket.readyState === WebSocket.OPEN) {
+            socket.send(blob); // Send the video frame as a Blob to the backend
+          }
+        }, 'image/jpeg');
       }
-    }, 1000);
 
-    return () => clearInterval(interval);
-  }, []);
+      requestAnimationFrame(sendVideoFeed); // Continuously send frames
+    };
 
-  // Draw grid lines and detections on the canvas
-  useEffect(() => {
-    const canvas = canvasRef.current;
-    const video = webcamRef.current;
-    if (!canvas || !video) return;
+    sendVideoFeed();
 
-    const ctx = canvas.getContext('2d');
-    if (!ctx) return;
-
-    // match canvas size to the video
-    canvas.width = video.videoWidth;
-    canvas.height = video.videoHeight;
-
-    // Clear previous drawings
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-    // Optionally draw grid lines
-    if (showGrid) {
-      ctx.strokeStyle = 'gray';
-      ctx.lineWidth = 1;
-      const thirdWidth = canvas.width / 3;
-      const thirdHeight = canvas.height / 3;
-
-      for (let i = 1; i < 3; i++) {
-        ctx.beginPath();
-        ctx.moveTo(thirdWidth * i, 0);
-        ctx.lineTo(thirdWidth * i, canvas.height);
-        ctx.stroke();
-
-        ctx.beginPath();
-        ctx.moveTo(0, thirdHeight * i);
-        ctx.lineTo(canvas.width, thirdHeight * i);
-        ctx.stroke();
-      }
-    }
-
-    // Draw detection bounding boxes
-    ctx.strokeStyle = 'red';
-    ctx.lineWidth = 2;
-    detections.forEach(({ x, y, width, height }) => {
-      ctx.strokeRect(x, y, width, height);
-    });
-  }, [detections, showGrid]);
+    return () => {
+      socket.close(); // Clean up the WebSocket connection on component unmount
+    };
+  }, [stream]);
 
   return (
-    <div style={{ position: 'relative', width: '100%' }}>
+    <div className="relative">
       <video
         ref={webcamRef}
         autoPlay
         muted
         playsInline
-        style={{ position: 'absolute', top: 0, left: 0, zIndex: 1 }}
-      />
-      <canvas
-        ref={canvasRef}
-        style={{ position: 'absolute', top: 0, left: 0, zIndex: 2 }}
-      />
-      <button
-        onClick={() => setShowGrid(prev => !prev)}
-        style={{ position: 'absolute', top: 10, left: 10, zIndex: 3 }}
-      >
-        Toggle Grid
-      </button>
+        className="w-full border border-gray-700 rounded-lg"
+      ></video>
+      {showGrid && (
+        <canvas
+          ref={canvasRef}
+          className="absolute top-0 left-0 w-full h-full pointer-events-none"
+        ></canvas>
+      )}
     </div>
   );
 };

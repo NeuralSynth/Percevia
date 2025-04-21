@@ -12,7 +12,7 @@ MODEL_URLS = {
     'yolov8m': 'https://github.com/ultralytics/assets/releases/download/v0.0.0/yolov8m.pt',
     'yolov8l': 'https://github.com/ultralytics/assets/releases/download/v0.0.0/yolov8l.pt',
     'yolov8x': 'https://github.com/ultralytics/assets/releases/download/v0.0.0/yolov8x.pt',
-    'yolov8x-seg': 'https://github.com/ultralytics/assets/releases/download/v0.0.0/yolov8x-seg.pt'
+    #'yolov8x-seg': 'https://github.com/ultralytics/assets/releases/download/v0.0.0/yolov8x-seg.pt'
 }
 
 def download_model(model_name='yolov8x', models_dir='models'):
@@ -49,7 +49,7 @@ def download_model(model_name='yolov8x', models_dir='models'):
     
     return model_path
 
-def load_yolo_model(model_name='yolov8seg', device='cuda'):
+def load_yolo_model(model_name='yolov8x', device='cuda'):
     """Load a YOLO model and return it for inference."""
     try:
         # Check if CUDA is available

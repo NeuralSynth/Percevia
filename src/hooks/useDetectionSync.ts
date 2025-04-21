@@ -14,7 +14,7 @@ type Detection = {
  * and maintains a local state that can be used for rendering
  */
 export function useDetectionSync() {
-  const { detections } = useCameraStream();
+  const { stream, detections } = useCameraStream() as { stream: MediaStream | null; detections: Detection[] };
   const [localDetections, setLocalDetections] = useState<Detection[]>([]);
   const [lastUpdateTime, setLastUpdateTime] = useState<Date>(new Date());
 
