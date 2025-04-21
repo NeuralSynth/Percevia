@@ -113,15 +113,6 @@ export default function Home() {
               Percevia
             </motion.span>
           </motion.h1>
-          <motion.p
-            initial={{ opacity: 0, y: 30 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 1, delay: 0.7 }}
-            className="text-xl md:text-2xl text-blue-50 max-w-3xl mx-auto leading-relaxed font-light tracking-wide"
-          >
-            AI-powered wearable glasses that bring real-time object detection to the visually challenged,
-            enhancing independence and awareness.
-          </motion.p>
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
