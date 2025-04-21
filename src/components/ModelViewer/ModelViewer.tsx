@@ -7,7 +7,7 @@ import React, { forwardRef, useRef } from 'react';
 declare global {
   namespace JSX {
     interface IntrinsicElements {
-      'model-viewer': React.DetailedHTMLProps<React.HTMLAttributes<HTMLElement> & {
+      'model-viewer': React.DetailedHTMLProps<React.HTMLAttributes<HTMLElement>, HTMLElement> & {
         src: string;
         poster?: string;
         alt?: string;
@@ -17,8 +17,8 @@ declare global {
         'tone-mapping'?: string;
         'shadow-intensity'?: number;
         exposure?: number;
-        'auto-rotate'?: boolean | undefined;
-      }, HTMLElement>;
+        'auto-rotate'?: boolean;
+      };
     }
   }
 }
