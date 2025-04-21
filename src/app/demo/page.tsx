@@ -3,7 +3,7 @@
 import { useState, useEffect, useRef } from 'react';
 import dynamic from 'next/dynamic';
 import Head from 'next/head';
-import { useCameraStream } from '@/components/WebcamDetection';
+import { useCameraStream } from '@/components/Webcam Detection/WebcamDetection';
 import { useDetectionSync } from '@/hooks/useDetectionSync';
 
 // Dynamically import components that use browser APIs with ssr: false
@@ -19,7 +19,7 @@ const AnimatedBackground = dynamic(
 
 // Import WebcamDetection with SSR disabled
 const WebcamDetection = dynamic(
-  () => import('@/components/WebcamDetection').then(mod => mod.default),
+  () => import('@/components/Webcam Detection/WebcamDetection').then(mod => mod.default),
   { ssr: false }
 );
 
@@ -27,22 +27,15 @@ export default function DemoPage() {
   const [activeFeature, setActiveFeature] = useState('vision');
   const [isMounted, setIsMounted] = useState(false);
   const [modelViewerLoaded, setModelViewerLoaded] = useState(false);
-  const { getStream } = useCameraStream();
+  const { stream } = useCameraStream(); // ✅ FIXED: using stream directly
   const { detections, objectCounts, lastUpdateTime, hasDetections } = useDetectionSync();
   const modelViewerRef = useRef(null);
 
   useEffect(() => {
     setIsMounted(true);
 
-    // Initialize camera stream when component mounts
-    if (isMounted) {
-      getStream().catch(err => {
-        console.error('Error initializing camera:', err);
-      });
-    }
-
     // Load model-viewer script manually when component mounts
-    if (isMounted && !modelViewerLoaded) {
+    if (!modelViewerLoaded) {
       const script = document.createElement('script');
       script.src = 'https://unpkg.com/@google/model-viewer/dist/model-viewer.min.js';
       script.type = 'module';
@@ -55,9 +48,8 @@ export default function DemoPage() {
       };
       document.body.appendChild(script);
     }
-  }, [isMounted, getStream, modelViewerLoaded]);
+  }, [modelViewerLoaded]);
 
-  // Log detections in render to track updates
   useEffect(() => {
     console.log("Demo page received detections:", detections?.length || 0);
   }, [detections]);
@@ -86,7 +78,6 @@ export default function DemoPage() {
   return (
     <>
       <Head>
-        {/* Remove any auto-preloading by indicating we'll load it ourselves */}
         <meta name="model-viewer-script-handled" content="true" />
       </Head>
 
@@ -113,7 +104,6 @@ export default function DemoPage() {
                 <div className="max-w-3xl mx-auto">
                   <WebcamDetection />
 
-                  {/* Detection analytics - now uses synchronized state */}
                   {hasDetections ? (
                     <div className="mt-6 bg-black/30 backdrop-blur-sm border border-white/10 rounded-lg p-4">
                       <h3 className="text-xl font-semibold text-white mb-3">

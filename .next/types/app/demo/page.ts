@@ -1,4 +1,4 @@
-// File: /home/neuralsynth/Code/Vision/src/app/demo/page.tsx
+// File: C:\pri\Percevia\src\app\demo\page.tsx
 import * as entry from '../../../../src/app/demo/page.js'
 import type { ResolvingMetadata, ResolvingViewport } from 'next/dist/lib/metadata/types/metadata-interface.js'
 
