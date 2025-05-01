@@ -1,0 +1,36 @@
+**Vision Assistance App - Feature List**
+
+This app is designed to help individuals who are completely or heavily partially blind navigate the real world without external aid.
+
+### **Object Detection & Distance Feedback** 
+- Uses the mobile device’s camera to detect objects.
+- Divides the field of view into 9 quadrants (3x3 grid) to indicate object location.
+- Estimates object distance using phone vibration motors (intensity-based feedback). keeps giving these details every set time interval , also whenever the data changes
+- Provides haptic feedback for better interaction.
+- Recognizes household items and human faces accurately.
+
+### **Interactive Buttons & Controls**
+- 9 buttons mapped to the 9 quadrants on the screen:
+  1. **Describe Object in Detail** – Initially provides a short description; pressing gives more information.
+  2. **Call Emergency Contact** – Quickly calls a preset number (family member, caretaker, etc.).
+  3-9. Additional customizable buttons for features like:
+     - Voice command activation.
+     - Saving an object’s details for later reference.
+     - Adjusting vibration intensity or sensitivity.
+     - Enabling/disabling certain features.
+- Utilizes volume and power button combinations for quick access to essential features.
+
+### **Accident Detection & Emergency Alerts**
+- Integrated GPS functionality for navigation and location tracking.
+- Detects heavy falls and automatically sends emergency alerts.
+- Option to input health information at startup for quick medical response.
+- Sends location, medical info, and emergency message to hospitals and family members.
+
+### **Additional Features & Enhancements**
+- Voice assistance for optional audio cues.
+- Configurable grid system (3x3 or 2x4) for different navigation preferences.
+- AI-powered object recognition for improved accuracy.
+- Offline functionality for critical features.
+- Customizable vibration patterns for different object types.
+
+This feature-rich vision assistance app aims to provide independence and safety to visually impaired users, leveraging smart technology for real-world navigation and emergency support.

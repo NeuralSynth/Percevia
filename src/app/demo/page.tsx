@@ -6,7 +6,6 @@ import Head from 'next/head';
 import { useCameraStream } from '@/components/Webcam Detection/WebcamDetection';
 import { useDetectionSync } from '@/hooks/useDetectionSync';
 
-// Dynamically import components that use browser APIs with ssr: false
 const ModelViewer = dynamic(
   () => import('@/components/ModelViewer/ModelViewer').then(mod => mod.ModelViewer),
   { ssr: false }
@@ -17,63 +16,89 @@ const AnimatedBackground = dynamic(
   { ssr: false }
 );
 
-// Import WebcamDetection with SSR disabled
-const WebcamDetection = dynamic(
-  () => import('@/components/Webcam Detection/WebcamDetection').then(mod => mod.default),
-  { ssr: false }
-);
-
 export default function DemoPage() {
   const [activeFeature, setActiveFeature] = useState('vision');
   const [isMounted, setIsMounted] = useState(false);
   const [modelViewerLoaded, setModelViewerLoaded] = useState(false);
-  const { stream } = useCameraStream(); // ✅ FIXED: using stream directly
-  const { detections, objectCounts, lastUpdateTime, hasDetections } = useDetectionSync();
-  const modelViewerRef = useRef(null);
+  const { stream } = useCameraStream();
+  const { detections } = useDetectionSync();
+  const canvasRef = useRef<HTMLCanvasElement>(null);
 
   useEffect(() => {
     setIsMounted(true);
 
-    // Load model-viewer script manually when component mounts
     if (!modelViewerLoaded) {
       const script = document.createElement('script');
       script.src = 'https://unpkg.com/@google/model-viewer/dist/model-viewer.min.js';
       script.type = 'module';
-      script.onload = () => {
-        setModelViewerLoaded(true);
-        console.log("Model Viewer script loaded successfully");
-      };
-      script.onerror = (e) => {
-        console.error("Error loading Model Viewer script:", e);
-      };
+      script.onload = () => setModelViewerLoaded(true);
+      script.onerror = (e) => console.error("Error loading Model Viewer script:", e);
       document.body.appendChild(script);
     }
   }, [modelViewerLoaded]);
 
   useEffect(() => {
-    console.log("Demo page received detections:", detections?.length || 0);
-  }, [detections]);
+    if (stream && canvasRef.current) {
+      const canvas = canvasRef.current;
+      const context = canvas.getContext('2d');
+      const video = document.createElement('video');
+      video.srcObject = stream;
+      video.play();
 
-  const features = [
-    {
-      id: 'vision',
-      title: 'AI Vision Enhancement',
-      description: 'Experience real-time object detection and recognition with our advanced AI algorithms.',
-      animation: 'fade-right'
-    },
-    {
-      id: 'interface',
-      title: 'Intuitive Interface',
-      description: 'Control your experience with natural gestures and voice commands.',
-      animation: 'fade-left'
-    },
-    {
-      id: 'analytics',
-      title: 'Real-time Analytics',
-      description: 'Get instant feedback and detailed analysis of your surroundings.',
-      animation: 'fade-up'
+      const renderFrame = () => {
+        if (context && video.readyState === video.HAVE_ENOUGH_DATA) {
+          canvas.width = video.videoWidth;
+          canvas.height = video.videoHeight;
+          context.clearRect(0, 0, canvas.width, canvas.height);
+
+          // Draw the video feed
+          context.drawImage(video, 0, 0, canvas.width, canvas.height);
+
+          // Draw 3x3 gridlines
+          const rows = 3;
+          const cols = 3;
+          const cellWidth = canvas.width / cols;
+          const cellHeight = canvas.height / rows;
+
+          context.strokeStyle = 'rgba(0, 0, 0, 0.7)'; // Dark lines
+          context.lineWidth = 2;
+
+          // Draw vertical lines
+          for (let x = 1; x < cols; x++) {
+            const posX = x * cellWidth;
+            context.beginPath();
+            context.moveTo(posX, 0);
+            context.lineTo(posX, canvas.height);
+            context.stroke();
+          }
+
+          // Draw horizontal lines
+          for (let y = 1; y < rows; y++) {
+            const posY = y * cellHeight;
+            context.beginPath();
+            context.moveTo(0, posY);
+            context.lineTo(canvas.width, posY);
+            context.stroke();
+          }
+
+          // Render detections
+          if (detections) {
+            context.strokeStyle = 'red';
+            context.lineWidth = 2;
+            detections.forEach((detection) => {
+              const { x, y, w, h } = detection as unknown as { x: number; y: number; w: number; h: number }; // Explicitly cast to unknown first
+              if (x !== undefined && y !== undefined && w !== undefined && h !== undefined) {
+                context.strokeRect(x, y, w, h);
+              }
+            });
+          }
+        }
+        requestAnimationFrame(renderFrame);
+      };
+
+      renderFrame();
     }
-  ];
+  }, [stream, detections]);
 
   return (
     <>
@@ -95,57 +120,23 @@ export default function DemoPage() {
               </p>
             </div>
 
-            {/* WebcamDetection section */}
-            {isMounted && (
-              <div className="mb-24">
-                <h2 className="text-3xl font-bold text-white text-center mb-8">
-                  Live Object Detection
-                </h2>
-                <div className="max-w-3xl mx-auto">
-                  <WebcamDetection />
-
-                  {hasDetections ? (
-                    <div className="mt-6 bg-black/30 backdrop-blur-sm border border-white/10 rounded-lg p-4">
-                      <h3 className="text-xl font-semibold text-white mb-3">
-                        Detection Results (Updated: {lastUpdateTime.toLocaleTimeString()})
-                      </h3>
-                      <div className="grid grid-cols-2 gap-4">
-                        <div>
-                          <h4 className="text-white text-lg mb-2">Objects Detected</h4>
-                          <ul className="text-gray-300">
-                            {Object.entries(objectCounts).map(([className, count]) => (
-                              <li key={className} className="mb-1 flex justify-between">
-                                <span>{className}</span>
-                                <span className="font-semibold">{count}</span>
-                              </li>
-                            ))}
-                          </ul>
-                        </div>
-                        <div>
-                          <h4 className="text-white text-lg mb-2">Detection Summary</h4>
-                          <p className="text-gray-300">
-                            Total objects detected: {detections.length}
-                          </p>
-                          <p className="text-gray-300">
-                            Object types: {Object.keys(objectCounts).length}
-                          </p>
-                        </div>
-                      </div>
-                    </div>
-                  ) : (
-                    <div className="mt-6 bg-black/30 backdrop-blur-sm border border-white/10 rounded-lg p-4 text-center">
-                      <p className="text-gray-300">No objects detected yet. Try moving objects in front of the camera.</p>
-                    </div>
-                  )}
-                </div>
+            {/* Canvas for video feed */}
+            <div className="mb-24">
+              <h2 className="text-3xl font-bold text-white text-center mb-8">
+                Live Object Detection
+              </h2>
+              <div className="max-w-3xl mx-auto">
+                <canvas
+                  ref={canvasRef}
+                  className="w-full border border-gray-700 rounded-lg"
+                ></canvas>
               </div>
-            )}
+            </div>
 
             <div className="grid md:grid-cols-2 gap-12 items-center mb-24">
               <div className="relative h-[400px] w-full">
                 {isMounted && modelViewerLoaded && (
                   <ModelViewer
-                    ref={modelViewerRef}
                     src="/models/glasses.glb"
                     poster="/models/glasses-poster.webp"
                     alt="Percevia Smart Glasses"
@@ -155,12 +146,30 @@ export default function DemoPage() {
               </div>
 
               <div className="space-y-8">
-                {features.map((feature) => (
+                {/* Features */}
+                {[
+                  {
+                    id: 'vision',
+                    title: 'AI Vision Enhancement',
+                    description: 'Experience real-time object detection and recognition with our advanced AI algorithms.',
+                  },
+                  {
+                    id: 'interface',
+                    title: 'Intuitive Interface',
+                    description: 'Control your experience with natural gestures and voice commands.',
+                  },
+                  {
+                    id: 'analytics',
+                    title: 'Real-time Analytics',
+                    description: 'Get instant feedback and detailed analysis of your surroundings.',
+                  },
+                ].map((feature) => (
                   <div
                     key={feature.id}
-                    className={`p-6 rounded-lg border border-white/10 backdrop-blur-sm transition-all duration-300 hover:border-blue-500/50 cursor-pointer ${activeFeature === feature.id ? 'bg-blue-500/10 border-blue-500' : 'bg-black/50'}`}
+                    className={`p-6 rounded-lg border border-white/10 backdrop-blur-sm transition-all duration-300 hover:border-blue-500/50 cursor-pointer ${
+                      activeFeature === feature.id ? 'bg-blue-500/10 border-blue-500' : 'bg-black/50'
+                    }`}
                     onClick={() => setActiveFeature(feature.id)}
-                    data-aos={feature.animation}
                   >
                     <h3 className="text-xl font-semibold text-white mb-2">{feature.title}</h3>
                     <p className="text-gray-300">{feature.description}</p>
