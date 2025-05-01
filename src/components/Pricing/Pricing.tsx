@@ -5,7 +5,14 @@ import { useState, useEffect } from 'react';
 import Squares from '@/Backgrounds/Squares/Squares';
 import { ModelViewer } from '@/components/ModelViewer/ModelViewer';
 
-const PricingTier = ({ title, price, features, isPopular = false }) => (
+interface PricingTierProps {
+  title: string;
+  price: number;
+  features: string[];
+  isPopular?: boolean;
+}
+
+const PricingTier = ({ title, price, features, isPopular = false }: PricingTierProps) => (
   <motion.div
     initial={{ opacity: 0, y: 20 }}
     whileInView={{ opacity: 1, y: 0 }}
