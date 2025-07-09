@@ -60,7 +60,7 @@ export default function DemoPage() {
           const cellWidth = canvas.width / cols;
           const cellHeight = canvas.height / rows;
 
-          context.strokeStyle = 'rgba(0, 0, 0, 0.7)'; // Dark lines
+          context.strokeStyle = 'rgba(0, 0, 0, 0.7)'; 
           context.lineWidth = 2;
 
           // Draw vertical lines
