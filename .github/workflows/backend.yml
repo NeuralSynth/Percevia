@@ -4,6 +4,7 @@ on:
   push:
     branches: [ main ]
     paths:
+      - '.github/workflows/backend.yml'
       - 'backend/**'
       - 'requirements.txt'
   pull_request:
@@ -28,6 +29,4 @@ jobs:
         pip install -r requirements.txt
 
     - name: Syntax Check
-      run: |
-        # Check all python files in the backend directory recursively
-        python -m py_compile $(find backend -name "*.py")
+      run: python -m compileall backend
