@@ -839,7 +839,10 @@ class InfiniteGridMenu {
     this.updateProjectionMatrix();
   }
 
+  private isDisposed = false;
+
   public run(time = 0): void {
+    if (this.isDisposed) return;
     this._deltaTime = Math.min(32, time - this._time);
     this._time = time;
     this._deltaFrames = this._deltaTime / this.TARGET_FRAME_DURATION;
@@ -849,6 +852,13 @@ class InfiniteGridMenu {
     this.render();
 
     requestAnimationFrame((t) => this.run(t));
+  }
+
+  public dispose(): void {
+    this.isDisposed = true;
+    if (this.gl) {
+      this.gl.getExtension("WEBGL_lose_context")?.loseContext();
+    }
   }
 
   private init(onInit?: InitCallback): void {
@@ -1320,6 +1330,9 @@ const InfiniteMenu: FC<InfiniteMenuProps> = ({ items = [] }) => {
 
     return () => {
       window.removeEventListener("resize", handleResize);
+      if (sketch) {
+        sketch.dispose();
+      }
     };
   }, [items]);
 

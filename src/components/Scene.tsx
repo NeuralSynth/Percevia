@@ -2,7 +2,6 @@
 
 import { Canvas } from '@react-three/fiber';
 import { OrbitControls, PerspectiveCamera, Environment } from '@react-three/drei';
-import { Bloom, EffectComposer } from '@react-three/postprocessing';
 import { Suspense } from 'react';
 import { motion } from 'framer-motion-3d';
 
@@ -93,9 +92,9 @@ function Glasses() {
   );
 }
 
-export default function Scene() {
+function SceneContent() {
   return (
-    <Canvas>
+    <>
       <PerspectiveCamera makeDefault position={[0, 0, 5]} />
       <OrbitControls
         enableZoom={false}
@@ -107,11 +106,7 @@ export default function Scene() {
       
       <Suspense fallback={null}>
         <Glasses />
-        <EffectComposer>
-          <Bloom luminanceThreshold={1} intensity={1.5} />
-        </EffectComposer>
       </Suspense>
-      
       <ambientLight intensity={0.5} />
       <spotLight
         position={[10, 10, 10]}
@@ -120,6 +115,14 @@ export default function Scene() {
         intensity={1}
         castShadow
       />
+    </>
+  );
+}
+
+export default function Scene() {
+  return (
+    <Canvas>
+      <SceneContent />
     </Canvas>
   );
 }

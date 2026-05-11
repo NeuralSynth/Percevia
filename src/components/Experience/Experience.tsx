@@ -1,5 +1,6 @@
 import React, { FC } from 'react';
 import { motion } from 'framer-motion';
+import Image from 'next/image';
 
 const Experience: FC = () => {
   return (
@@ -79,9 +80,11 @@ const FeatureCard: FC<Feature> = ({ title, description, image, gradient }) => (
     className={`rounded-3xl overflow-hidden relative group cursor-pointer transition-all duration-500 hover:scale-[1.02] bg-gradient-to-br ${gradient} backdrop-blur-sm border border-white/5 ${title === 'Real-time Detection' ? 'md:col-span-4' : title === 'Advanced AI Model' ? 'md:col-span-2' : title === 'Multiple Objects' ? 'md:col-span-3' : 'md:col-span-3'}`}
   >
     <div className={`relative overflow-hidden backdrop-blur-sm ${title === 'Real-time Detection' ? 'aspect-[16/9]' : title === 'Advanced AI Model' ? 'aspect-[3/4]' : 'aspect-video'}`}>
-      <img
+      <Image
         src={image}
         alt={title}
+        fill
+        sizes="(max-width: 768px) 100vw, 50vw"
         className="w-full h-full object-cover opacity-80 group-hover:opacity-100 transition-opacity duration-500"
       />
       <div className="absolute inset-0 bg-black/40 group-hover:bg-black/20 transition-all duration-500"></div>

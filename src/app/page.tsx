@@ -2,6 +2,7 @@
 
 import { motion } from 'framer-motion';
 import dynamic from 'next/dynamic';
+import Image from 'next/image';
 import { Suspense } from 'react';
 import DecryptedText from '@/TextAnimations/DecryptedText/DecryptedText';
 import GooeyNav from '@/components/GooeyNav/GooeyNav';
@@ -38,7 +39,7 @@ export default function Home() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-16">
             <div className="flex items-center">
-              <img src="/logo.svg" alt="Percevia" className="h-8" />
+              <Image src="/logo.svg" alt="Percevia" width={32} height={32} className="h-8 w-auto" />
               <span className="ml-2 font-bold text-xl bg-clip-text text-transparent bg-gradient-to-r from-white to-blue-200">Percevia</span>
             </div>
             <div className="hidden md:block">
@@ -59,7 +60,7 @@ export default function Home() {
             </div>
             <div className="flex items-center space-x-4">
               <a href="#login" className="text-blue-100 hover:text-white transition-colors font-medium">Login</a>
-              <a href="demo" className="px-4 py-2 bg-gradient-to-r from-blue-500 to-blue-600 rounded-md text-white font-medium hover:from-blue-600 hover:to-blue-700 transition-colors shadow-lg hover:shadow-blue-500/25">Demo</a>
+              <a href="/demo" className="px-4 py-2 bg-gradient-to-r from-blue-500 to-blue-600 rounded-md text-white font-medium hover:from-blue-600 hover:to-blue-700 transition-colors shadow-lg hover:shadow-blue-500/25">Demo</a>
             </div>
           </div>
         </div>
@@ -183,10 +184,12 @@ export default function Home() {
                 { src: "/partners/broadcom.svg", alt: "Broadcom", height: "h-8" }
               ].map((logo, index) => (
                 <div key={index} className="bg-white/95 p-6 rounded-2xl flex items-center justify-center group hover:bg-white transition-all duration-300 shadow-lg hover:shadow-xl backdrop-blur-sm border border-gray-100 hover:border-blue-200">
-                  <img 
+                  <Image 
                     src={logo.src} 
                     alt={logo.alt} 
-                    className={`${logo.height} opacity-70 group-hover:opacity-100 transition-all duration-300 transform group-hover:scale-105`} 
+                    width={120}
+                    height={40}
+                    className={`${logo.height} w-auto opacity-70 group-hover:opacity-100 transition-all duration-300 transform group-hover:scale-105`} 
                   />
                 </div>
               ))}

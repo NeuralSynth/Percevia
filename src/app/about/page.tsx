@@ -2,55 +2,10 @@
 
 import { motion, useScroll, useTransform } from 'framer-motion';
 import { useRef, useEffect, useState } from 'react';
-import { LiquidChrome } from '@/Backgrounds/LiquidChrome/LiquidChrome';
-import { Canvas } from '@react-three/fiber';
-import { OrbitControls, useGLTF } from '@react-three/drei';
-import * as THREE from 'three';
+import Image from 'next/image';
+import dynamic from 'next/dynamic';
 
-const GlassesModel = () => {
-  const MODEL_PATH = '/components/Pricing/perceviatransparentglb.glb';
-  
-  // Preload the model to avoid loading issues
-  useGLTF.preload(MODEL_PATH);
-  
-  const { scene } = useGLTF(MODEL_PATH);
-  
-  useEffect(() => {
-    if (!scene) return;
-    
-    // Configure material properties
-    scene.traverse((object) => {
-      const child = object as THREE.Mesh;
-      if (child.isMesh) {
-        if (child.material) {
-          (child.material as THREE.Material).transparent = true;
-          (child.material as THREE.Material).opacity = 0.8;
-        }
-      }
-    });
-
-    // Cleanup function
-    return () => {
-      scene.traverse((object) => {
-        const child = object as THREE.Mesh;
-        if (child.isMesh) {
-          if (child.material) {
-            (child.material as THREE.Material).dispose();
-          }
-          if (child.geometry) {
-            child.geometry.dispose();
-          }
-        }
-      });
-      useGLTF.clear(MODEL_PATH);
-    };
-
-  }, [scene]);
-
-  if (!scene) return null;
-  return <primitive object={scene} scale={2} position={[0, 0, 0]} />;
-};
-
+const AboutScene = dynamic(() => import('@/components/AboutScene'), { ssr: false });
 
 const FloatingCard = ({ children, delay = 0 }: { children: React.ReactNode; delay?: number }) => {
   const cardRef = useRef<HTMLDivElement>(null);
@@ -98,25 +53,7 @@ export default function About() {
 
   return (
     <main ref={containerRef} className="min-h-screen text-white pt-24 pb-16 relative overflow-hidden">
-      <div className="absolute inset-0 -z-10">
-        <LiquidChrome
-          baseColor={[0.05, 0.05, 0.1]}
-          speed={0.2}
-          amplitude={0.4}
-          frequencyX={2.5}
-          frequencyY={1.5}
-        />
-      </div>
-      {/* Hero Section */}
-      <div className="fixed inset-0 -z-10">
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_center,rgba(37,99,235,0.1),transparent_50%)]" />
-        <Canvas camera={{ position: [0, 0, 5] }}>
-          <ambientLight intensity={0.5} />
-          <pointLight position={[10, 10, 10]} />
-          <GlassesModel />
-          <OrbitControls enableZoom={false} autoRotate autoRotateSpeed={0.5} />
-        </Canvas>
-      </div>
+      <AboutScene />
 
       <section className="relative min-h-screen flex items-center justify-center py-20">
         <motion.div
@@ -189,10 +126,12 @@ export default function About() {
                   whileHover={{ scale: 1.02 }}
                   transition={{ type: 'spring', stiffness: 300 }}
                 >
-                  <img
+                  <Image
                     src="/features/hero.jpg"
                     alt="Percevia Mission"
-                    className="rounded-2xl shadow-2xl relative z-10 w-full h-full object-cover"
+                    width={800}
+                    height={600}
+                    className="rounded-2xl shadow-2xl relative z-10 w-full h-auto object-cover"
                   />
                 </motion.div>
               </div>
@@ -302,12 +241,11 @@ export default function About() {
                     className="relative overflow-hidden rounded-2xl bg-white/5 backdrop-blur-xl p-6 border border-white/10"
                   >
                     <div className="relative mb-6 aspect-square overflow-hidden rounded-xl">
-                      <motion.img
-                        whileHover={{ scale: 1.1 }}
-                        transition={{ duration: 0.4 }}
+                      <Image
                         src={member.image}
                         alt={member.name}
-                        className="w-full h-full object-cover"
+                        fill
+                        className="w-full h-full object-cover transition-transform duration-400 group-hover:scale-110"
                       />
                       <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-black/20 to-transparent"></div>
                     </div>
