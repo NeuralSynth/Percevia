@@ -37,7 +37,7 @@ const HowItWorks = () => {
           <h2 className="text-7xl font-extrabold mb-6 bg-clip-text text-transparent bg-gradient-to-r from-gray-900 via-blue-900 to-gray-900 tracking-tight">How it works</h2>
           <p className="text-2xl text-gray-600 max-w-3xl mx-auto font-light leading-relaxed">
             Manage your experience from start to finish, from integrations to registration and from interactive
-            stage elements to post-event data, it's all here.
+            stage elements to post-event data, it&apos;s all here.
           </p>
           <a
             href="#learn-more"

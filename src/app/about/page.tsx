@@ -13,48 +13,50 @@ const GlassesModel = () => {
   // Preload the model to avoid loading issues
   useGLTF.preload(MODEL_PATH);
   
-  // Use try-catch to handle loading errors
-  try {
-    const { scene } = useGLTF(MODEL_PATH);
+  const { scene } = useGLTF(MODEL_PATH);
+  
+  useEffect(() => {
+    if (!scene) return;
     
-    useEffect(() => {
-      // Configure material properties
-      scene.traverse((child) => {
-        if ('isMesh' in child && child.isMesh) {
-          child.material.transparent = true;
-          if (child.material instanceof THREE.Material) {
-            child.material.opacity = 0.8;
+    // Configure material properties
+    scene.traverse((object) => {
+      const child = object as THREE.Mesh;
+      if (child.isMesh) {
+        if (child.material) {
+          (child.material as THREE.Material).transparent = true;
+          (child.material as THREE.Material).opacity = 0.8;
+        }
+      }
+    });
+
+    // Cleanup function
+    return () => {
+      scene.traverse((object) => {
+        const child = object as THREE.Mesh;
+        if (child.isMesh) {
+          if (child.material) {
+            (child.material as THREE.Material).dispose();
+          }
+          if (child.geometry) {
+            child.geometry.dispose();
           }
         }
       });
-      
-      // Cleanup function
-      return () => {
-        scene.traverse((child) => {
-          if ('isMesh' in child && child.isMesh) {
-            if (child.material) {
-              child.material.dispose();
-            }
-            if (child.geometry) {
-              child.geometry.dispose();
-            }
-          }
-        });
-        useGLTF.dispose(MODEL_PATH);
-      };
-    }, [scene]);
-    
-    return <primitive object={scene} scale={2} position={[0, 0, 0]} />;
-  } catch (error) {
-    console.error('Error loading 3D model:', error);
-    return null; // Return empty component if model fails to load
-  }
+      useGLTF.clear(MODEL_PATH);
+    };
+
+  }, [scene]);
+
+  if (!scene) return null;
+  return <primitive object={scene} scale={2} position={[0, 0, 0]} />;
 };
 
-const FloatingCard = ({ children, delay = 0 }) => {
-  const cardRef = useRef(null);
+
+const FloatingCard = ({ children, delay = 0 }: { children: React.ReactNode; delay?: number }) => {
+  const cardRef = useRef<HTMLDivElement>(null);
   useEffect(() => {
-    const handleMouseMove = (e) => {
+    const handleMouseMove = (e: MouseEvent) => {
+
       if (!cardRef.current) return;
       const rect = cardRef.current?.getBoundingClientRect() || new DOMRect();
       const x = (e.clientX - rect.left) / rect.width - 0.5;
@@ -157,11 +159,12 @@ export default function About() {
                 </div>
                 <div className="space-y-6">
                   <p className="text-xl text-blue-100/80 leading-relaxed">
-                    At Percevia, we're dedicated to transforming the lives of visually challenged individuals through cutting-edge AI technology. Our mission is to enhance independence, confidence, and quality of life by providing real-time object detection and environmental awareness.
+                    At Percevia, we&apos;re dedicated to transforming the lives of visually challenged individuals through cutting-edge AI technology. Our mission is to enhance independence, confidence, and quality of life by providing real-time object detection and environmental awareness.
                   </p>
                   <p className="text-xl text-blue-100/80 leading-relaxed">
-                    We believe that technology should be accessible to everyone, and we're committed to making that vision a reality.
+                    We believe that technology should be accessible to everyone, and we&apos;re committed to making that vision a reality.
                   </p>
+
                 </div>
                 <div className="flex gap-4">
                   <motion.button

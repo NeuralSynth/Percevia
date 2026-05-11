@@ -18,7 +18,7 @@ const Testimonial = () => {
               className="space-y-6 bg-transparent backdrop-blur-sm p-8 rounded-2xl"
             >
               <h2 className="text-4xl md:text-5xl font-bold tracking-tight leading-tight">
-                "The one of a kind application that allows us to manage and regulate what your loved one might need!"
+                &quot;The one of a kind application that allows us to manage and regulate what your loved one might need!&quot;
               </h2>
               <p className="text-gray-400 text-lg">
                 -Anonymous

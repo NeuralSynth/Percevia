@@ -19,8 +19,9 @@ export default function Events() {
               Join the Waitlist
             </h1>
             <p className="text-2xl text-blue-100/80 max-w-3xl mx-auto leading-relaxed mb-12">
-              We're preparing something exciting! Stay tuned for upcoming Percevia events.
+              We&apos;re preparing something exciting! Stay tuned for upcoming Percevia events.
             </p>
+
             
             {/* Countdown Timer */}
             <div className="grid grid-cols-2 md:grid-cols-4 gap-6 max-w-3xl mx-auto mb-16">
