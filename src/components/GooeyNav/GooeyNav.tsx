@@ -180,8 +180,7 @@ const GooeyNav: React.FC<GooeyNavProps> = ({
   return (
     <>
       {/* This effect is quite difficult to recreate faithfully using Tailwind, so a style tag is a necessary workaround */}
-      <style>
-        {`
+      <style dangerouslySetInnerHTML={{ __html: `
           :root {
             --linear-ease: linear(0, 0.068, 0.19 2.7%, 0.804 8.1%, 1.037, 1.199 13.2%, 1.245, 1.27 15.8%, 1.274, 1.272 17.4%, 1.249 19.1%, 0.996 28%, 0.949, 0.928 33.3%, 0.926, 0.933 36.8%, 1.001 45.6%, 1.013, 1.019 50.8%, 1.018 54.4%, 1 63.1%, 0.995 68%, 1.001 85%, 1);
             --color-1: #4080ff;
@@ -321,8 +320,8 @@ const GooeyNav: React.FC<GooeyNavProps> = ({
             transition: all 0.3s ease;
             z-index: -1;
           }
-        `}
-      </style>
+        ` }} />
+
       <div className="relative" ref={containerRef}>
         <nav
           className="flex relative"

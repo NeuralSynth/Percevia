@@ -1,6 +1,7 @@
 'use client';
 
 import GooeyNav from '@/components/GooeyNav/GooeyNav';
+import Image from 'next/image';
 
 export const Navigation = () => {
   return (
@@ -8,7 +9,7 @@ export const Navigation = () => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16">
           <div className="flex items-center">
-            <img src="/logo.svg" alt="Percevia" className="h-8" />
+            <Image src="/logo.svg" alt="Percevia" width={32} height={32} className="h-8 w-auto" />
             <span className="ml-2 font-bold text-xl bg-clip-text text-transparent bg-gradient-to-r from-white to-blue-200">Percevia</span>
           </div>
           <div className="hidden md:block">

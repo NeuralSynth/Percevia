@@ -1,6 +1,7 @@
 'use client';
 
 import { motion } from 'framer-motion';
+import Image from 'next/image';
 
 export const Footer = () => {
   const footerLinks = [
@@ -46,7 +47,7 @@ export const Footer = () => {
         <div className="grid grid-cols-2 md:grid-cols-4 gap-8 mb-12">
           <div className="col-span-2 md:col-span-1">
             <div className="flex items-center mb-6">
-              <img src="/logo.svg" alt="Percevia" className="h-8" />
+              <Image src="/logo.svg" alt="Percevia" width={32} height={32} className="h-8 w-auto" />
               <span className="ml-2 font-bold text-xl bg-clip-text text-transparent bg-gradient-to-r from-white to-blue-200">Percevia</span>
             </div>
             <p className="text-blue-100/70 text-sm leading-relaxed mb-6">
@@ -60,7 +61,7 @@ export const Footer = () => {
                   className="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center hover:bg-white/10 transition-colors"
                   aria-label={link.label}
                 >
-                  <img src={link.icon} alt={link.label} className="w-5 h-5" />
+                  <Image src={link.icon} alt={link.label} width={20} height={20} className="w-5 h-5" />
                 </a>
               ))}
             </div>

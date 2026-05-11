@@ -17,7 +17,7 @@ interface FlowingMenuProps {
 
 const FlowingMenu: React.FC<FlowingMenuProps> = ({ items = [] }) => {
   return (
-    <div className="w-screen h-screen fixed left-0 top-0 z-50 bg-black/90 backdrop-blur-lg overflow-hidden">
+    <div className="w-full h-full min-h-screen relative bg-black/90 backdrop-blur-lg overflow-hidden">
       <nav className="flex flex-col h-full justify-center items-stretch m-0 p-0">
         {items.map((item, idx) => (
           <MenuItem key={idx} {...item} />

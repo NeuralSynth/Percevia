@@ -1,74 +1,127 @@
-# Vision Assistance App
+# 👁️ Percevia: AI-Powered Vision Enhancement
 
-## Overview
-The **Vision Assistance App** is designed to empower individuals who are completely or heavily partially blind by helping them navigate the real world independently. Leveraging AI-powered object detection, haptic feedback, and emergency features, the app enhances accessibility and safety.
-
----
-## ✨ Key Features
-
-### 🔍 Object Detection & Distance Feedback
-- Uses the mobile device’s camera to detect objects in real-time.
-- Divides the field of view into a **9-quadrant grid (3x3)** for precise object localization.
-- Estimates object distance and provides **intensity-based haptic feedback**.
-- Recognizes common household items and human faces accurately.
-
-### 🎛 Interactive Controls
-- **On-Screen Buttons:**
-  - **Describe Object in Detail:** Short description on tap, detailed info on long press.
-  - **Call Emergency Contact:** Quick dial to a preset contact (family, caretaker, etc.).
-  - **Customizable Buttons:**
-    - Voice commands 🎙
-    - Saving object details for later reference 📝
-    - Adjusting vibration intensity ⚙
-    - Toggling features on/off 📴
-  - **Physical Button Shortcuts:** Volume and power button combinations for quick actions.
-
-### 🚨 Emergency Features
-- **GPS Functionality:** Navigation and location tracking 🗺
-- **Fall Detection:** Auto emergency alert activation 📡
-- **Medical Information Storage:** Quick access to health data for emergencies 🏥
-- **Automated Emergency Messages:** Sends location and medical info to hospitals and family members 📩
-
-### 🔧 Additional Functionalities
-- **Voice Assistance:** Audio cues for enhanced interaction 🎙
-- **Customizable Grid Layouts:** Choose between **3x3** or **2x4** grid systems 📐
-- **AI-Powered Object Recognition:** Powered by **TensorFlow Lite, OpenCV, or YOLO** 🤖
-- **Offline Functionality:** Essential features work without internet ⚡
-- **Personalized Vibration Patterns:** Different haptic responses for various object types
+**Percevia** is a cutting-edge assistive technology platform designed to empower visually challenged individuals through real-time AI object detection and spatial awareness. By combining modern web technologies with advanced computer vision, Percevia provides an intuitive interface for navigating and understanding the world.
 
 ---
-## 🚀 How It Works
-1. **Launch the app** 📲
-2. **Point the camera at your surroundings** 🎥
-3. **Receive real-time feedback** via haptic cues 📳
-4. **Use on-screen or physical controls** for additional assistance 🎛
-5. **Enable GPS navigation or emergency alerts** for added security 🗺
+
+## ✨ Features
+
+### 🔍 Real-Time AI Vision
+- **YOLOv8 Integration:** State-of-the-art object detection using Ultralytics YOLOv8.
+- **Low-Latency Streaming:** Real-time video processing via Socket.IO.
+- **Spatial Mapping:** Detects and localizes objects within a 3x3 grid system for precise orientation.
+
+### 🎙️ Multi-Sensory Feedback
+- **Audio Announcements:** Real-time vocalization of detected objects using a dedicated TTS engine.
+- **Haptic Hints:** (Experimental) Intensity-based feedback for object proximity.
+
+### 👓 Interactive Demo & 3D Visualization
+- **Smart Glass Viewer:** High-fidelity 3D model visualization of Percevia hardware.
+- **Dynamic UI:** Responsive, dark-themed interface built for performance and accessibility.
 
 ---
-## 🛠 Tech Stack
-- **Mobile Platforms:** Java/Kotlin (Android) | Swift (iOS)
-- **Machine Learning:** TensorFlow Lite / OpenCV / YOLO
-- **Haptic Feedback:** Android Vibration API, iOS Core Haptics
-- **GPS & Emergency Alerts:** Google Maps API, Twilio API
 
----
-## 📌 Future Enhancements
-- 🌍 **Multi-language support** for global accessibility
-- 🎵 **Dynamic sound cues** to aid navigation
-- 🦾 **Integration with smart wearables** (e.g., smart glasses, AI-powered assistants)
-- 🗂 **Cloud-based AI training** for improved object recognition
+## 🏗️ System Architecture
 
----
-## 🏗 Installation & Setup
-### Clone the repository:
-```sh
-git clone https://github.com/yourusername/Vision-Assistance-App.git
+```mermaid
+graph TD
+    subgraph "Client (Frontend)"
+        U[User/Webcam] -->|Video Frames| DC[DetectionProvider Context]
+        DC -->|Socket.IO| SC[Socket.IO Client]
+        SR[Socket.IO Results] -->|Render| CNV[Live Canvas HUD]
+    end
+
+    subgraph "Server (Backend)"
+        SC <-->|Binary/JSON| SI[Flask-SocketIO Server]
+        SI -->|Process Frame| DS[Detection Service]
+        DS -->|YOLOv8 Inference| YM[Model Weights]
+        DS -->|Detections| AS[Audio Service]
+        AS -->|TTS| SPK[Audio Announcement]
+        DS -->|Results| SI
+    end
+    
+    style DC fill:#3b82f6,stroke:#fff,stroke-width:2px,color:#fff
+    style SI fill:#10b981,stroke:#fff,stroke-width:2px,color:#fff
+    style DS fill:#8b5cf6,stroke:#fff,stroke-width:2px,color:#fff
 ```
-### Setup Instructions:
-1. Open the project in **Android Studio/Xcode**.
-2. Build and install the app on a test device.
 
 ---
+
+## 🛠️ Tech Stack
+
+
+### Frontend
+- **Framework:** [Next.js 14](https://nextjs.org/) (App Router)
+- **Styling:** [Tailwind CSS](https://tailwindcss.com/)
+- **Animations:** [Framer Motion](https://www.framer.com/motion/)
+- **3D Rendering:** [React Three Fiber](https://docs.pmnd.rs/react-three-fiber) & [Three.js](https://threejs.org/)
+- **Communication:** [Socket.IO Client](https://socket.io/docs/v4/client-api/)
+
+### Backend
+- **Server:** [Flask](https://flask.palletsprojects.com/)
+- **Real-Time:** [Flask-SocketIO](https://flask-socketio.readthedocs.io/)
+- **ML Engine:** [Ultralytics YOLOv8](https://docs.ultralytics.com/)
+- **Processing:** [PyTorch](https://pytorch.org/) & [OpenCV](https://opencv.org/)
+- **Speech:** [Pyttsx3](https://pyttsx3.readthedocs.io/)
+
+---
+
+## 🏗️ Project Structure
+
+Following **System Design Principles**, the project is split into modular components:
+
+```text
+percevia/
+├── backend/                # Python ML & Socket Server
+│   ├── services/           # Detection & Audio logic
+│   ├── weights/            # ML Model weights (YOLOv8)
+│   ├── app.py              # Server entry point
+│   └── config.py           # Centralized configuration
+├── src/                    # Next.js Frontend
+│   ├── app/                # App Router pages
+│   ├── components/         # UI & 3D components
+│   ├── contexts/           # Global state (DetectionProvider)
+│   ├── hooks/              # Custom hooks (useDetectionSync)
+│   └── lib/                # Utilities & Socket singleton
+└── public/                 # Static assets & 3D models
+```
+
+---
+
+## 🚀 Getting Started
+
+### 1. Prerequisites
+- Node.js 18+
+- Python 3.9+
+- A webcam (for the demo)
+
+### 2. Backend Setup
+```bash
+# Navigate to backend (optional, if running locally)
+cd backend
+# Install Python dependencies
+pip install -r ../requirements.txt
+# Run the server
+python app.py
+```
+
+### 3. Frontend Setup
+```bash
+# Install Node dependencies
+npm install --legacy-peer-deps
+# Run development server
+npm run dev
+```
+Open [http://localhost:3000](http://localhost:3000) to view the application.
+
+---
+
 ## 📜 License
 This project is licensed under the **MIT License**.
 
+---
+
+## 🤝 Acknowledgments
+- **Ultralytics** for the incredible YOLOv8 models.
+- **React Bits** for the stunning UI animation components.
+- **Three.js** community for 3D rendering support.
